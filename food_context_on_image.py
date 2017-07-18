@@ -86,5 +86,4 @@ def make_data():
     with open('test_image.pickle', mode='wb') as f:
         pickle.dump(test, f)
 
-make_data()
 
