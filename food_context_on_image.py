@@ -1,6 +1,7 @@
 import pickle
 import glob
 import os
+import sys
 import chainer
 from PIL import Image
 from chainer.datasets import tuple_dataset
@@ -42,7 +43,7 @@ def img_shrink():
 
 def make_data():
 
-    path_to_data = "C:/Users/Yuji Goda/Documents/gitFiles/TLCrawl/dataset/"
+    path_to_data = "~/home/goda/research/dataset_10000/"
     paths_and_labels = []
 
     for i in range(10):
@@ -58,10 +59,11 @@ def make_data():
         for img_name in image_list:
             all_data.append([img_name, label])
     all_data = np.random.permutation(all_data)
-
+    print("finished getting path")
     imageData = []
     labelData = []
-    for pathAndLabel in all_data:
+    max = len(all_data)
+    for i, pathAndLabel in enumerate(all_data):
         img = Image.open(pathAndLabel[0])
         #3チャンネルの画像をr,g,bそれぞれの画像に分ける
         r,g,b = img.split()
@@ -71,6 +73,9 @@ def make_data():
         imgData = np.asarray([rImgData, gImgData, bImgData])
         imageData.append(imgData)
         labelData.append(np.int32(pathAndLabel[1]))
+        sys.stdout.write("\r%d" % i)
+        sys.stdout.write(" / %d" % max)
+        sys.stdout.flush()
 
     threshold = np.int32(len(imageData)/8*7)
     train = tuple_dataset.TupleDataset(imageData[0:threshold], labelData[0:threshold])
